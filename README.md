@@ -10,6 +10,9 @@ A simple and easy-to-use NPU (HUAWEI ASCEND) monitoring tool based on curses, de
 *   **Log Recording:** Records program running logs for easy troubleshooting.
 *   **Color Display:** Uses different colors based on temperature and memory usage to more intuitively reflect the NPU status.
 
+## Screenshot
+![Screenshot](images/screeshot.png)
+
 ## Installation
 
 1.  **Clone the repository:**
