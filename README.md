@@ -44,6 +44,7 @@ A simple and easy-to-use NPU (HUAWEI ASCEND) monitoring tool based on curses, de
     *   `-l` or `--log-level`: Set the log level (DEBUG, INFO, WARNING, ERROR, CRITICAL), default is INFO. For example: `python -m npu_monitor.main -l DEBUG`
 
 ## Project Structure
+```markdown
 npu-monitor/
 ├── logger/            # Custom logging module (if used)
 │   └── logging.py
@@ -55,3 +56,4 @@ npu-monitor/
 │   └── utils.py       # Helper functions
 ├── README.md          # This file
 └── ...
+```
