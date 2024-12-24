@@ -15,7 +15,7 @@ A simple and easy-to-use NPU (HUAWEI ASCEND) monitoring tool based on curses, de
 1.  **Clone the repository:**
 
     ```bash
-    git clone [Your Repository URL]
+    git clone https://github.com/HackGiter/npu-monitor
     cd npu-monitor
     ```
 
