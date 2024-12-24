@@ -1,4 +1,4 @@
-<h1 style="text-align: center;">NPU Monitoring Tool</h1>
+<h1 align="center">NPU Monitoring Tool</h1>
 
 A simple and easy-to-use NPU (HUAWEI ASCEND) monitoring tool based on curses, designed for real-time monitoring of Huawei Ascend NPU usage.
 
