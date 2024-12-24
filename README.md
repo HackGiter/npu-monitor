@@ -29,6 +29,15 @@ A simple and easy-to-use NPU (HUAWEI ASCEND) monitoring tool based on curses, de
     python3 -m venv .venv
     source .venv/bin/activate
     ```
+4. **Installation:**
+
+    ```bash
+    git install -e .
+    ```
+    or install from github directly
+    ```bash
+    pip install git+[https://github.com/HackGiter/npu-monitor.git](https://github.com/HackGiter/npu-monitor.git)
+    ```
 
 ## Usage
 
