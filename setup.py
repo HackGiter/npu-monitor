@@ -6,12 +6,12 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setuptools.setup(
     name="npu-monitor",  # 项目名称
     version="0.1.0",  # 项目版本
-    author="Your Name",  # 你的名字
+    author="HackGiter",  # 你的名字
     author_email="lee19990614@icloud.com",  
     description="A simple NPU monitoring tool.",  # 简短描述
     long_description=long_description, 
     long_description_content_type="text/markdown",  # 长描述的格式
-    url="https://github.com/yourusername/npu-monitor",  # 项目的 GitHub 仓库地址
+    url="https://github.com/HackGiter/npu-monitor",  # 项目的 GitHub 仓库地址
     packages=setuptools.find_packages(),  # 自动查找项目中的包
     classifiers=[  # 项目的分类信息，用于 PyPI 搜索
         "Programming Language :: Python :: 3",
