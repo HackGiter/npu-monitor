@@ -126,6 +126,7 @@ class NpuMonitor:
             for npu in npu_data:
                 npu_index = npu.index #使用npu index
                 hbm_total = int(npu.hbm_total)
+                hbm_usage = int(npu.hbm_used)
                 bar = create_progressbar(int(npu.aicore_used), BAR_WIDTH-10)
                 if npu.processes:
                     for process in npu.processes:
@@ -139,9 +140,8 @@ class NpuMonitor:
                             f"{process.mem} MB",
                             bar,
                             f" {cmd}")
-                        self.stdscr.addstr(process_info, colorize_mem(int(mem_usage), hbm_total))
-                        npu_index = " "
-                        bar = ""
+                        self.stdscr.addstr(process_info, colorize_mem(max(hbm_usage, mem_usage), hbm_total))
+                        npu_index, bar, hbm_usage = " ", "", 0
                 else:
                     self.stdscr.addstr(f"{npu_index:<{NPU_ID_WIDTH}}| No running processes\n", colorize_mem(0, hbm_total)) #输出npu index
 

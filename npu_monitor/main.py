@@ -1,7 +1,6 @@
 import curses
 import argparse
 
-from npu_monitor import NpuMonitor  # 从包中导入 NpuMonitor
 from logger.logging import setup_logger, getLogger # 导入日志配置函数
 
 def main():
@@ -12,6 +11,8 @@ def main():
                         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
                         help="Log Level (DEBUG, INFO, WARNING, ERROR, CRITICAL), default: INFO")
     args = parser.parse_args()
+
+    from npu_monitor import NpuMonitor  # 从包中导入 NpuMonitor
 
     # 设置日志记录器
     logger = setup_logger(args.log_level)
