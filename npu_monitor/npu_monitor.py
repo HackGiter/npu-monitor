@@ -99,8 +99,10 @@ class NpuMonitor:
 
         npu_data = self.parse_npu_info(npu_info)
 
-        process_width = cols - NPU_WIDTH - 3
-        self.logger.debug(process_width)
+        PROCESS_WIDTH = cols - NPU_WIDTH - 5
+        CMD_WIDTH = cols - (NPU_ID_WIDTH + PID_WIDTH + NAME_WIDTH + MEM_WIDTH + BAR_WIDTH + 10)
+        self.logger.debug(PROCESS_WIDTH)
+        self.logger.debug(CMD_WIDTH)
         self.logger.debug(cols)
         self.logger.debug(NPU_WIDTH)
 
@@ -117,7 +119,7 @@ class NpuMonitor:
                                     str(npu.power), f"{npu.aicore_used}", 
                                     f"{npu.hbm_used:>5}/{npu.hbm_total}") + "\n", colorize_temp(temp_celsius)) #显示index
 
-        process_format = f"{{:<{NPU_ID_WIDTH}}}|{{:^{PID_WIDTH}}}|{{:^{NAME_WIDTH}}}|{{:^{MEM_WIDTH}}}|{{:^{BAR_WIDTH}}}|{{:^{CMD_WIDTH}}}\n"
+        process_format = f"{{:<{NPU_ID_WIDTH}}}|{{:^{PID_WIDTH}}}|{{:^{NAME_WIDTH}}}|{{:^{MEM_WIDTH}}}|{{:^{BAR_WIDTH}}}|{{:<{CMD_WIDTH}}}\n"
         self.stdscr.addstr("\nProcesses running:\n")
         if npu_data:
             process_header = f"{'':<{NPU_ID_WIDTH}}| {'Processes Info':<{PROCESS_WIDTH}}" # 第一个空字符串是为了占位NPU索引列
