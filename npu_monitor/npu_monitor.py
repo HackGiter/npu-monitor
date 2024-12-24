@@ -1,7 +1,7 @@
 import re
 import time
 import subprocess
-import logging
+from logger.logging import getLogger
 from .utils import (
     init_color,
     colorize_temp, 
@@ -18,7 +18,7 @@ class NpuMonitor:
     def __init__(self, stdscr, refresh_rate):
         self.stdscr = stdscr
         self.refresh_rate = refresh_rate
-        self.logger = logging.getLogger(__name__)
+        self.logger = getLogger(__name__)
 
     def get_npu_info(self):
         try:
@@ -100,9 +100,9 @@ class NpuMonitor:
         npu_data = self.parse_npu_info(npu_info)
 
         process_width = cols - NPU_WIDTH - 3
-        logging.debug(process_width)
-        logging.debug(cols)
-        logging.debug(NPU_WIDTH)
+        self.logger.debug(process_width)
+        self.logger.debug(cols)
+        self.logger.debug(NPU_WIDTH)
 
         header_format = f"{{:<{NPU_WIDTH}}}|{{:^{TEMP_WIDTH}}}|{{:^{POWER_WIDTH}}}|{{:^{AICORE_WIDTH}}}|{{:^{HBM_WIDTH}}}"
         header_str = header_format.format("NPU", "Temp (°C)", "Power (W)", "AICore Usage (%)", "HBM Usage (MB)")
