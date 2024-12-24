@@ -1,0 +1,6 @@
+[project]
+name = "npu-monitor"
+version = "0.1.0"
+dependencies = []
+[project.scripts]
+npu-monitor = "npu_monitor.main:main"

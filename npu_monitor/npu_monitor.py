@@ -2,7 +2,7 @@ import re
 import time
 import subprocess
 import logging
-from utils import (
+from .utils import (
     init_color,
     colorize_temp, 
     colorize_mem, 
