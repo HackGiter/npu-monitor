@@ -3,4 +3,7 @@ name = "npu-monitor"
 version = "0.1.0"
 description = "A tool for monitoring NPU..."
 readme = "README.md"
+requires-python = ">=3.8"
 dependencies = []
+[project.scripts]
+npu-monitor = "npu_monitor.main:main" # Correct entry point
