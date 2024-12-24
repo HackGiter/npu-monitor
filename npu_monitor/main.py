@@ -30,3 +30,6 @@ def main():
             stdscr.getch() # 等待用户按键，防止窗口立即关闭
     curses.wrapper(monitor_engine)
     main_logger.debug("Program over")
+
+if __name__ == "__main__":
+    main()
