@@ -2,4 +2,5 @@
 name = "npu-monitor"
 version = "0.1.0"
 description = "A tool for monitoring NPU..."
+readme = "README.md"
 dependencies = []
