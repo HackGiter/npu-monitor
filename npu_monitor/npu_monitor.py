@@ -12,7 +12,7 @@ from .utils import (
     A_UNDERLINE,
     A_BOLD
 )
-from hparam import *
+from .hparam import *
 
 class NpuMonitor:
     def __init__(self, stdscr, refresh_rate):
