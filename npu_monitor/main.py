@@ -6,7 +6,7 @@ from logger.logging import setup_logger, getLogger # 导入日志配置函数
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="NPU monitor tool")
-    parser.add_argument("-r", "--refresh-rate", type=float, default=1.0,
+    parser.add_argument("-r", "--refresh-rate", type=float, default=0.5,
                         help="Refresh rate (s), default 1.0")
     parser.add_argument("-l", "--log-level", type=str, default="INFO",
                         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
