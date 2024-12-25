@@ -9,6 +9,8 @@ from curses import (
     COLOR_YELLOW,
     A_UNDERLINE,
     A_BOLD,
+    ERR,
+    endwin
 )
 from collections import namedtuple
 

@@ -1,6 +1,7 @@
 import re
 import time
 import subprocess
+import asyncio
 from logger.logging import getLogger
 from .utils import (
     init_color,
@@ -10,7 +11,9 @@ from .utils import (
     NpuData, 
     Process,
     A_UNDERLINE,
-    A_BOLD
+    A_BOLD,
+    ERR,
+    endwin
 )
 from .hparam import *
 
@@ -19,16 +22,22 @@ class NpuMonitor:
         self.stdscr = stdscr
         self.refresh_rate = refresh_rate
         self.logger = getLogger(__name__)
+        self.cancel_flag = False  # 添加取消标志
 
-    def get_npu_info(self):
+    async def async_get_npu_info(self):  # 异步获取 NPU 信息
         try:
-            process = subprocess.run(['npu-smi', 'info'], capture_output=True, text=True, check=True)
-            self.logger.debug(f"npu-smi info output:\n{process.stdout}")
-            return process.stdout
-        except subprocess.CalledProcessError as e:
-            error_message = f"Error executing npu-smi: {e}\nStdout: {e.stdout}\nStderr: {e.stderr}"
-            self.logger.error(error_message)
-            return f"Error executing npu-smi: {e}"
+            process = await asyncio.create_subprocess_exec(  # 使用 asyncio 创建子进程
+                'npu-smi', 'info',
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE
+            )
+            stdout, stderr = await process.communicate()  # 异步等待子进程完成
+            if process.returncode != 0:
+                error_message = f"Error executing npu-smi: Return code {process.returncode}\nStdout: {stdout.decode()}\nStderr: {stderr.decode()}"
+                self.logger.error(error_message)
+                return f"Error executing npu-smi: Return code {process.returncode}"
+            self.logger.debug(f"npu-smi info output:\n{stdout.decode()}")
+            return stdout.decode()
         except FileNotFoundError:
             error_message = "npu-smi command not found. Please ensure it's installed."
             self.logger.error(error_message)
@@ -90,15 +99,7 @@ class NpuMonitor:
 
         init_color()
         self.stdscr.addstr("NPU Monitor (Press Ctrl+C to quit)\n", A_BOLD)
-        npu_info = self.get_npu_info()
         
-        if "Error" in npu_info or "not found" in npu_info:
-            self.stdscr.addstr("No NPU information available or npu-smi command execution failed.")
-            self.stdscr.refresh()
-            return
-
-        npu_data = self.parse_npu_info(npu_info)
-
         PROCESS_WIDTH = cols - NPU_WIDTH - 5
         CMD_WIDTH = cols - (NPU_ID_WIDTH + PID_WIDTH + NAME_WIDTH + MEM_WIDTH + BAR_WIDTH + 10)
         self.logger.debug(PROCESS_WIDTH)
@@ -149,19 +150,55 @@ class NpuMonitor:
 
         self.stdscr.refresh()
 
-    def run(self):
-        self.stdscr.nodelay(True)
-        self.stdscr.timeout(100)
+    async def async_get_key(self):
+        """异步获取按键，并设置取消标志"""
+        loop = asyncio.get_running_loop()
+        key_future = loop.create_future()
 
+        self.stdscr.nodelay(True)
+        self.stdscr.timeout(0)  # 设置 timeout 为 0，getch 立即返回
         while True:
-            npu_info_str = self.get_npu_info()
+            key = self.stdscr.getch()
+            if key != ERR:
+                if key in (ord('q'), ord('Q')):
+                    self.cancel_flag = True  # 设置取消标志
+                loop.call_soon_threadsafe(key_future.set_result, key)
+                break
+            await asyncio.sleep(0.01)  # 避免 CPU 占用过高
+        self.stdscr.timeout(100) # 恢复 timeout
+        self.stdscr.nodelay(False)
+        return await key_future
+
+    async def monitor_loop(self):
+        while not self.cancel_flag:  # 循环条件改为检查取消标志
+            npu_info_str = await self.async_get_npu_info()
             if "Error" in npu_info_str or "not found" in npu_info_str:
-                self.display_npu_info([])  # Display empty data to show error message
+                self.display_npu_info([])
             else:
                 npu_data = self.parse_npu_info(npu_info_str)
                 self.display_npu_info(npu_data)
-            time.sleep(self.refresh_rate)
 
-            key = self.stdscr.getch()
-            if key == ord('q') or key == ord('Q'):
+            try:
+                # 使用 asyncio.wait_for 同时等待刷新时间和按键事件
+                key_task = asyncio.create_task(self.async_get_key())
+                await asyncio.wait_for(asyncio.shield(key_task), self.refresh_rate)
+                if key_task.done():
+                    key = key_task.result()
+                    # 这里不再需要检查 key 是否为 q 或 Q，因为已经在 async_get_key 中处理了
+            except asyncio.TimeoutError:
+                pass  # 超时，继续循环
+            except asyncio.CancelledError:
                 break
+        # 退出循环后进行清理工作，例如 endwin()
+        endwin() # 确保在curses结束后调用endwin
+
+    def run(self):
+        async def main_async():
+            try:
+                await self.monitor_loop()
+            except KeyboardInterrupt:  # 捕获 ctrl+c
+                pass
+            finally:
+                pass # endwin() 移动到 monitor_loop 循环结束后执行，确保 curses 正确关闭
+
+        asyncio.run(main_async())
